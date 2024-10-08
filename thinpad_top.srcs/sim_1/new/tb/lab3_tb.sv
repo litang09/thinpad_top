@@ -3,17 +3,18 @@ module lab3_tb;
 
   wire clk_50M, clk_11M0592;
 
-  reg push_btn;   // BTN5 æŒ‰é’®å¼€å…³ï¼Œå¸¦æ¶ˆæŠ–ç”µè·¯ï¼ŒæŒ‰ä¸‹æ—¶ä¸º 1
-  reg reset_btn;  // BTN6 å¤ä½æŒ‰é’®ï¼Œå¸¦æ¶ˆæŠ–ç”µè·¯ï¼ŒæŒ‰ä¸‹æ—¶ä¸º 1
+  reg push_btn;   // BTN5 °´Å¥¿ª¹Ø£¬´øÏû¶¶µçÂ·£¬°´ÏÂÊ±Îª 1
+  reg reset_btn;  // BTN6 ¸´Î»°´Å¥£¬´øÏû¶¶µçÂ·£¬°´ÏÂÊ±Îª 1
 
-  reg [3:0] touch_btn; // BTN1~BTN4ï¼ŒæŒ‰é’®å¼€å…³ï¼ŒæŒ‰ä¸‹æ—¶ä¸º 1
-  reg [31:0] dip_sw;   // 32 ä½æ‹¨ç å¼€å…³ï¼Œæ‹¨åˆ°â€œONâ€æ—¶ä¸º 1
+  reg [3:0] touch_btn; // BTN1~BTN4£¬°´Å¥¿ª¹Ø£¬°´ÏÂÊ±Îª 1
+  reg [31:0] dip_sw;   // 32 Î»²¦Âë¿ª¹Ø£¬²¦µ½¡°ON¡±Ê±Îª 1
 
-  wire [15:0] leds;  // 16 ä½ LEDï¼Œè¾“å‡ºæ—¶ 1 ç‚¹äº®
-  wire [7:0] dpy0;   // æ•°ç ç®¡ä½Žä½ä¿¡å·ï¼ŒåŒ…æ‹¬å°æ•°ç‚¹ï¼Œè¾“å‡º 1 ç‚¹äº®
-  wire [7:0] dpy1;   // æ•°ç ç®¡é«˜ä½ä¿¡å·ï¼ŒåŒ…æ‹¬å°æ•°ç‚¹ï¼Œè¾“å‡º 1 ç‚¹äº®
+  wire [15:0] leds;  // 16 Î» LED£¬Êä³öÊ± 1 µãÁÁ
+  wire [7:0] dpy0;   // ÊýÂë¹ÜµÍÎ»ÐÅºÅ£¬°üÀ¨Ð¡Êýµã£¬Êä³ö 1 µãÁÁ
+  wire [7:0] dpy1;   // ÊýÂë¹Ü¸ßÎ»ÐÅºÅ£¬°üÀ¨Ð¡Êýµã£¬Êä³ö 1 µãÁÁ
 
-  // å®žéªŒ 3 ç”¨åˆ°çš„æŒ‡ä»¤æ ¼å¼
+
+  // ÊµÑé 3 ÓÃµ½µÄÖ¸Áî¸ñÊ½
   `define inst_rtype(rd, rs1, rs2, op) \
     {7'b0, rs2, rs1, 3'b0, rd, op, 3'b001}
 
@@ -43,7 +44,7 @@ module lab3_tb;
   logic [3:0] opcode;
 
   initial begin
-    // åœ¨è¿™é‡Œå¯ä»¥è‡ªå®šä¹‰æµ‹è¯•è¾“å…¥åºåˆ—ï¼Œä¾‹å¦‚ï¼š
+    // ÔÚÕâÀï¿ÉÒÔ×Ô¶¨Òå²âÊÔÊäÈëÐòÁÐ£¬ÀýÈç£º
     dip_sw = 32'h0;
     touch_btn = 0;
     reset_btn = 0;
@@ -53,9 +54,9 @@ module lab3_tb;
     reset_btn = 1;
     #100;
     reset_btn = 0;
-    #1000;  // ç­‰å¾…å¤ä½ç»“æŸ
-
-    // æ ·ä¾‹ï¼šä½¿ç”¨ POKE æŒ‡ä»¤ä¸ºå¯„å­˜å™¨èµ‹éšæœºåˆå€¼
+    #1000;  // µÈ´ý¸´Î»½áÊø
+    #50000
+    // ÑùÀý£ºÊ¹ÓÃ POKE Ö¸ÁîÎª¼Ä´æÆ÷¸³Ëæ»ú³õÖµ
     for (int i = 1; i < 32; i = i + 1) begin
       #100;
       rd = i;   // only lower 5 bits
@@ -66,14 +67,38 @@ module lab3_tb;
       push_btn = 0;
 
       #1000;
+      
+      // PEEK Ö¸Áî£¬¶ÁÈ¡¸ÕÐ´ÈëµÄÊý¾Ý
+      dip_sw = `inst_peek(rd, 16'd0);                    // Éú³É peek Ö¸Áî
+      push_btn = 1;  // Ä£Äâ°´¼ü°´ÏÂ
+
+      #100;
+      push_btn = 0;  // °´¼üËÉ¿ª
+    
+      #1000;  // µÈ´ý¶ÁÈ¡Íê³É
+
     end
 
-    // TODO: éšæœºæµ‹è¯•å„ç§æŒ‡ä»¤
+    // TODO: Ëæ»ú²âÊÔ¸÷ÖÖÖ¸Áî
+    rd=1;
+    opcode=1;
+    dip_sw=`inst_rtype(5'b00011, 5'b00011, 5'b00011, opcode);
+    push_btn = 1;  // Ä£Äâ°´¼ü°´ÏÂ
 
+      #100;
+      push_btn = 0;  // °´¼üËÉ¿ª
+    
+      #1000;  // µÈ´ý¶ÁÈ¡Íê³É
+      dip_sw = `inst_peek(5'b00011, 16'd0); 
+      push_btn = 1;
+      #100;
+      push_btn = 0;  // °´¼üËÉ¿ª
+    
+      #1000;  // µÈ´ý¶ÁÈ¡Íê³É
     #10000 $finish;
   end
 
-  // å¾…æµ‹è¯•ç”¨æˆ·è®¾è®¡
+  // ´ý²âÊÔÓÃ»§Éè¼Æ
   lab3_top dut (
       .clk_50M(clk_50M),
       .clk_11M0592(clk_11M0592),
@@ -114,7 +139,7 @@ module lab3_tb;
       .flash_we_n()
   );
 
-  // æ—¶é’Ÿæº
+  // Ê±ÖÓÔ´
   clock osc (
       .clk_11M0592(clk_11M0592),
       .clk_50M    (clk_50M)
